@@ -56,7 +56,6 @@ pipeline{
       stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
-			sh 'docker pull secfigo/nikto:latest'
 			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 13.233.153.33 -p 8080 -output /report/nikto-output.xml'
 			sh 'cat nikto-output.xml'   
 		    }
