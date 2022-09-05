@@ -60,5 +60,15 @@ pipeline{
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
+	  
+	  stage ('SSL Checks') {
+		    steps {
+			sh 'pip install sslyze==1.4.2'
+			sh 'python -m sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
+			sh 'cat sslyze-output.json'
+		    }
+	  }
   }
 }
+	    
+
