@@ -73,7 +73,7 @@ pipeline{
 	  
 	  stage ('SSL Checks') {
 		    steps {
-			sh 'docker ppython -m ull nablac0d3/sslyze'
+			sh 'docker pull nablac0d3/sslyze'
 			sh 'docker run --rm -it nablac0d3/sslyze:5.0.0 -h 15.206.128.115:8080 --json_out sslyze-output.json'
 			sh 'cat sslyze-output.json'
 		    }
