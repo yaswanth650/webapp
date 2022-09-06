@@ -74,7 +74,7 @@ pipeline{
 	  stage ('SSL Checks') {
 		    steps {
 			sh 'docker pull nablac0d3/sslyze'
-			sh 'docker run --rm  nablac0d3/sslyze  --regular 15.206.128.115:8080 '
+			sh 'docker run --rm  nablac0d3/sslyze  15.206.128.115:8080 '
 			sh 'cat sslyze'
 		    }
 	      }
