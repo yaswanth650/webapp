@@ -22,6 +22,16 @@ pipeline{
         sh 'cat trufflehog'
       }
     }
+	  
+     stage ('Source Composition Analysis') {
+       steps {
+          sh 'rm owasp* || true'
+          sh 'wget "https://raw.githubusercontent.com/yaswanth650/webapp/master/owasp-dependency-check.sh" '
+          sh 'chmod +x owasp-dependency-check.sh'
+          sh 'bash owasp-dependency-check.sh'
+          sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml
+       }
+    }
     
      stage ('Build') {
       steps {
@@ -43,7 +53,7 @@ pipeline{
 		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX 13.233.153.33'
 			       sh 'cat nmap'
 		    }
-	    }
+	        }
 	
      stage ('DAST') {
        steps {
@@ -67,7 +77,7 @@ pipeline{
 			sh 'python -m sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
 			sh 'cat sslyze-output.json'
 		    }
-	  }
+	      }
   }
 }
 	    
