@@ -39,7 +39,7 @@ pipeline{
      stage ('SSL Checks') {
 		    steps {
 		     sh 'docker pull nablac0d3/sslyze'
-		     sh ' docker run --rm -i nablac0d3/sslyze:5.0.0 3.109.3.10 p 8080'
+		     sh ' docker run --rm -i nablac0d3/sslyze:5.0.0  -h 3.109.3.10 p 8080'
 		     }
 		  }
    }
