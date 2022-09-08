@@ -24,14 +24,14 @@ pipeline{
      stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@65.2.74.85:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@3.109.3.10:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
      }
      stage ('DAST') {
        steps {
           sshagent(['zap']) {
-            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.234.120.190 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://65.2.74.85:8080/webapp/" || true'
+            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@3.110.215.74 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://3.109.3.10:8080/webapp/" || true'
         }
       }
      }
@@ -39,7 +39,7 @@ pipeline{
      stage ('SSL Checks') {
 		    steps {
 			sh 'pip install sslyze==1.4.2'
-			sh 'python -m sslyze --regular 65.2.3.90:8080 --json_out sslyze-output.json'
+			sh 'python -m sslyze --regular 3.109.3.10:8080 --json_out sslyze-output.json'
 			sh 'cat sslyze-output.json'
 		    }
 	    }
