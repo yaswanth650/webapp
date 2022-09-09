@@ -79,6 +79,11 @@ pipeline{
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
+	stage ('SSL Checks') {
+		    steps {
+		        sh 'docker pull nablac0d3/sslyze'
+		    }
+	    }
     }
 }
 	    
