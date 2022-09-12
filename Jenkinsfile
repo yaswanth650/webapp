@@ -51,7 +51,7 @@ pipeline{
      stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@3.111.52.8:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.233.60.141:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
      }
@@ -59,7 +59,7 @@ pipeline{
     stage ('Port Scan') {
 		    steps {
 		       	sh 'rm nmap* || true'
-		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 3.111.52.8'
+		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 13.233.60.141'
 			       sh 'cat nmap'
 		    }
 	        }
@@ -67,7 +67,7 @@ pipeline{
      stage ('DAST') {
        steps {
           sshagent(['zap']) {
-            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.233.112.72 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://3.111.52.8:8080/webapp/" || true'
+            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@3.110.85.93 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://13.233.60.141:8080/webapp/" || true'
         }
       }
     }
@@ -75,14 +75,14 @@ pipeline{
       stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
-			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 3.111.52.8 -p 8080 -output /report/nikto-output.xml'
+			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 13.233.60.141 -p 8080 -output /report/nikto-output.xml'
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
 	stage ('SSL Checks') {
 		    steps {
 		        sh 'docker pull nablac0d3/sslyze'
-			sh 'docker run --rm -i nablac0d3/sslyze:5.0.0 3.111.52.8:8080   --json_out sslyze-output.json'
+			sh 'docker run --rm -i nablac0d3/sslyze:5.0.0 13.233.60.141:8443   --json_out sslyze-output.json'
 			sh 'cat sslyze-output.json' 
 		    }
 	    }
