@@ -81,7 +81,7 @@ pipeline{
 	    }
 	stage ('SSL Checks') {
 		    steps {
-		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  43.204.231.8:8443 --json_out=results.json || true'
+		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  facebook.com --json_out=results.json || true'
 		    }
 	    }
     }
