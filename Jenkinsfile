@@ -81,8 +81,9 @@ pipeline{
 	    }
 	stage ('SSL Checks') {
 		    steps {
-		        sh 'docker pull nablac0d3/sslyze'
-			sh 'docker run -i nablac0d3/sslyze:5.0.0 43.204.231.8:8443   --json_out sslyze-output.json  || true'
+		        sh 'pip install sslyze==1.4.2'
+			sh 'python -m sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
+			sh 'cat sslyze-output.json'
 		    }
 	    }
     }
