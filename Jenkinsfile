@@ -81,9 +81,8 @@ pipeline{
 	    }
 	stage ('SSL Checks') {
 		    steps {
-		        sh 'git clone https://github.com/nabla-c0d3/sslyze.git'
-			sh 'sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
-			sh 'cat sslyze-output.json'
+		        sh 'docker run --rm -it nablac0d3/sslyze:5.0.0  43.204.231.8:8443 --json_out=results.json'
+			sh  'cat results.json'
 		    }
 	    }
     }
