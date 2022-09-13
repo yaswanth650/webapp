@@ -82,7 +82,7 @@ pipeline{
 	stage ('SSL Checks') {
 		    steps {
 		        sh 'git clone https://github.com/nabla-c0d3/sslyze.git'
-			sh 'python -m sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
+			sh 'sslyze --regular 54.86.226.84:8080 --json_out sslyze-output.json'
 			sh 'cat sslyze-output.json'
 		    }
 	    }
