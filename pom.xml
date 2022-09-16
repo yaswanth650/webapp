@@ -14,12 +14,7 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>1.7.0-alpha0</version>
-</dependency>
-  </dependencies>
+   </dependencies>
   <build>
     <finalName>WebApp</finalName>
   </build>
