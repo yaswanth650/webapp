@@ -79,12 +79,13 @@ pipeline{
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
+	
 	stage ('SSL Checks') {
 		    steps {
 		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.127.91.50:8443 --json_out results.json || true'
 		    }
 	    }//
-    }
-}
+      }
+  }
 	    
 
