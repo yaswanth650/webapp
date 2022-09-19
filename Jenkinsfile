@@ -23,8 +23,8 @@ pipeline{
       }
     }
 	  
-     stage ('Source Composition Analysis') {
-      agent  docker{
+	 stage('JS vulnerability check') {
+            agent {
                 docker 'gruebel/retirejs:latest'
                 args '--entrypoint ""'
             }
@@ -33,6 +33,7 @@ pipeline{
             }
         }
 	  
+     
      stage ('SAST') {
       steps {
         withSonarQubeEnv('sonarqube') {
