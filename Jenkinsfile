@@ -24,7 +24,7 @@ pipeline{
     }
 	  
      stage ('Source Composition Analysis') {
-      agent {
+      agent  docker{
                 docker 'gruebel/retirejs:latest'
                 args '--entrypoint ""'
             }
