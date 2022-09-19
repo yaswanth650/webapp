@@ -54,7 +54,7 @@ pipeline{
                 sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.127.91.50:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
-     }
+        }
    
     stage ('Port Scan') {
 		    steps {
@@ -84,8 +84,8 @@ pipeline{
 		    steps {
 		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.127.91.50:8443 --json_out results.json || true'
 		    }
-	    }
-      }
+	       }
+        }
   }
 	    
 
