@@ -24,7 +24,7 @@ pipeline{
     }
 	  
 	 stage('JS vulnerability check') {
-            agent {
+            agent(['docker']) {
                 docker 'gruebel/retirejs:latest'
                 args '--entrypoint ""'
             }
