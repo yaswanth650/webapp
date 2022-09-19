@@ -32,8 +32,8 @@ pipeline{
                 sh 'retire'
             }
         }
-<!--	  
-    stage ('SAST') {
+	  
+    //stage ('SAST') {
       steps {
         withSonarQubeEnv('sonarqube') {
           sh 'mvn sonar:sonar'
@@ -83,8 +83,7 @@ pipeline{
 		    steps {
 		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.127.91.50:8443 --json_out results.json || true'
 		    }
-	    }
-   -->	  
+	    }//
     }
 }
 	    
