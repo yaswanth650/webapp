@@ -23,25 +23,24 @@ pipeline{
       }
     }
 	  
-	 stage('JS vulnerability check') {
-            agent(['docker']) {
-                docker 'gruebel/retirejs:latest'
-                args '--entrypoint ""'
-            }
-            steps {
-                sh 'retire'
-            }
-        }
-	  
-     
-     stage ('SAST') {
+	  stage ('Source Composition Analysis') {
       steps {
-        withSonarQubeEnv('sonarqube') {
-          sh 'mvn sonar:sonar'
-          sh 'cat target/sonar/report-task.txt'
-        }
+         sh 'rm owasp* || true'
+         sh 'wget "https://raw.githubusercontent.com/yaswanth650/webapp/master/owasp-dependency-check.sh" '
+         sh 'chmod +x owasp-dependency-check.sh'
+         sh 'bash owasp-dependency-check.sh'
+         sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
+        
       }
     }
+	 stage ('SAST') {
+            steps {
+                 withSonarQubeEnv('sonarqube') {
+                  sh 'mvn sonar:sonar'
+                   sh 'cat target/sonar/report-task.txt'
+                }
+            }
+      }
     
      stage ('Build') {
       steps {
