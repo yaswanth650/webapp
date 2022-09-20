@@ -1,6 +1,6 @@
 #!/bin/sh
 
-OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check:7.0.0
+OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
 DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
 REPORT_DIRECTORY="$OWASPDC_DIRECTORY/reports"
 
@@ -13,8 +13,8 @@ if [ ! -d "$DATA_DIRECTORY" ]; then
     chmod -R 777 "$REPORT_DIRECTORY"
 fi
 
-# Make sure we are using the  version 7.0.0
-docker pull owasp/dependency-check:7.0.0
+# Make sure we are using the  latest version
+docker pull owasp/dependency-check
 
 docker run --rm \
     --volume $(pwd):/src \
