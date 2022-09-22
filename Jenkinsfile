@@ -33,6 +33,18 @@ pipeline{
         
       }
     } 
+
+    stage('Test') {
+      steps {
+        echo 'Testing...'
+        snykSecurity(
+          snykInstallation: 'snyk',
+          snykTokenId: 'snyk-api',
+          failOnIssues:'false'
+          )
+       }
+     }
+
 	  
    stage ('SAST') {
       steps {
@@ -73,7 +85,13 @@ pipeline{
       }
     }
 	  
-      stage ('Nikto Scan') {
+     stage('Scan with Probely') {
+            steps {
+                probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'medium'
+            }
+         }
+	  
+	  stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
 			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 13.126.3.12 -p 8080 -output /report/nikto-output.xml'
