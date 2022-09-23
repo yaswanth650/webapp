@@ -34,7 +34,7 @@ pipeline{
       }
     } 
 
-    stage('Test') {
+    stage('snyk') {
       steps {
         echo 'Testing...'
         snykSecurity(
@@ -85,7 +85,7 @@ pipeline{
       }
     }
 	  
-     stage('Scan with Probely') {
+     stage('Probely') {
             steps {
                 probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
             }
