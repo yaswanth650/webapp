@@ -87,7 +87,7 @@ pipeline{
 	  
      stage('Scan with Probely') {
             steps {
-                probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'low'
+                probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
             }
          }
 	  
