@@ -3,6 +3,14 @@ pipeline{
   tools{
     maven 'Maven'
   }
+	
+    environment {
+        NEXUS_VERSION = "nexus3"
+        NEXUS_PROTOCOL = "http"
+        NEXUS_URL = "65.1.1.242:8081"
+        NEXUS_REPOSITORY = "maven-central-repository"
+        NEXUS_CREDENTIAL_ID = "NEXUS_CRED"
+    }
   
   stages{
     stage('Initialize'){
