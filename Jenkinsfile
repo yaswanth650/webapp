@@ -71,43 +71,27 @@ pipeline{
 	  
    stage("Publish to Nexus Repository Manager") {
             steps {
-                script {
-                    pom = readMavenPom file: "pom.xml";
-                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
-                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-                    artifactPath = filesByGlob[0].path;
-                    artifactExists = fileExists artifactPath;
-                    if(artifactExists) {
-                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
-                        nexusArtifactUploader(
-                            nexusVersion: 'nexus3',
-                            protocol: 'http',
-                            nexusUrl: '65.1.1.242:8081',
-                            groupId: 'pom.lu.amazon.aws.demo',
-                            version: 'pom.1.0-SNAPSHOT',
-                            repository: 'maven-central-repository',
-                            credentialsId: 'NEXUS_CRED',
-                            artifacts: [
-                                [artifactId: 'pom.webapp',
-                                classifier: '',
-                                file: artifactPath,
-                                type: pom.packaging],
-                                [artifactId: 'pom.webapp',
-                                classifier: '',
-                                file: "pom.xml",
-                                type: "pom"]
-                            ]
-                        );
-                    } else {
-                        error "*** File: ${artifactPath}, could not be found";
-                    }
-                }
-            }
-        }
-    
-     stage ('Deploy-To-Tomcat') {
+               nexusArtifactUploader artifacts: [
+		       [
+			       artifactId: 'WebApp', 
+			       classifier: '', 
+			       file: 'target/webapp-1.0 war', 
+			       type: 'war'
+		       ]
+	       ], 
+		       credentialsId: 'NEXUS _CRED',
+		       groupId: 'lu.amazon.aws.demo',
+		       nexusUrl: '65.0.184.198:8081', 
+		       nexusVersion: 'nexus3', 
+		       protocol: 'http', 
+		       repository: 'maven-central-repository', 
+		       version: '1.0'
+	    }
+   }
+   
+    stage ('Deploy-To-Tomcat') {
             steps {
-           sshagent(['tomcat']) {
+               sshagent(['tomcat']) {
                 sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.233.212.217:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
