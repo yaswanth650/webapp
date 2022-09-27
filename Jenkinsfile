@@ -3,16 +3,7 @@ pipeline{
   tools{
     maven 'Maven'
   }
-	
-    environment {
-        NEXUS_VERSION = "nexus3"
-        NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "52.66.147.23:8081"
-        NEXUS_REPOSITORY = "maven-central-repository"
-        NEXUS_CREDENTIAL_ID = "NEXUS_CRED"
-    }
-  
-  stages{
+stages{
     stage('Initialize'){
       steps{
         sh '''
@@ -68,47 +59,11 @@ pipeline{
       sh 'mvn clean package'
        }
     }
-	  
- stage("Publish to Nexus Repository Manager") {
-            steps {
-                script {
-                    pom = readMavenPom file: "pom.xml";
-                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
-                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
-                    artifactPath = filesByGlob[0].path;
-                    artifactExists = fileExists artifactPath;
-                    if(artifactExists) {
-                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
-                        nexusArtifactUploader(
-                            nexusVersion: NEXUS_VERSION,
-                            protocol: NEXUS_PROTOCOL,
-                            nexusUrl: NEXUS_URL,
-                            groupId: pom.groupId,
-                            version: pom.version,
-                            repository: NEXUS_REPOSITORY,
-                            credentialsId: NEXUS_CREDENTIAL_ID,
-                            artifacts: [
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: artifactPath,
-                                type: pom.packaging],
-                                [artifactId: pom.artifactId,
-                                classifier: '',
-                                file: "pom.xml",
-                                type: "pom"]
-                            ]
-                        );
-                    } else {
-                        error "*** File: ${artifactPath}, could not be found";
-                    }
-                }
-            }
-        }
    
     stage ('Deploy-To-Tomcat') {
             steps {
                sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.233.212.217:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@65.2.190.161:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
         }
@@ -116,7 +71,7 @@ pipeline{
     stage ('Port Scan') {
 		    steps {
 		       	sh 'rm nmap* || true'
-		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 13.233.212.217'
+		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 65.2.190.161'
 			       sh 'cat nmap'
 		    }
 	        }
@@ -124,7 +79,7 @@ pipeline{
      stage ('DAST') {
        steps {
           sshagent(['zap']) {
-            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@15.206.72.217 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://13.233.212.217:8080/webapp/" || true'
+            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.234.118.165 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://65.2.190.161:8080/webapp/" || true'
         }
       }
     }
@@ -138,14 +93,14 @@ pipeline{
 	  stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
-			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 13.233.212.217 -p 8080 -output /report/nikto-output.xml'
+			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 65.2.190.161 -p 8080 -output /report/nikto-output.xml'
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
 	
 	stage ('SSL Checks') {
 		    steps {
-		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.233.212.217:8443 --json_out results.json || true'
+		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  65.2.190.161:8443 --json_out results.json || true'
 		    }
 	       }
         }
