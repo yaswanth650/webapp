@@ -30,7 +30,55 @@ stages{
             
             echo 'file exist'
         }
-    }   
+    }
+	
+	stage('server'){
+		steps{
+		  rtserver(
+			  id: "Artifactory",
+			  url: 'http://13.233.237.249:8081/artifactory',
+			  username: 'admin',
+			  password: 'RAVURI6@',
+			  bypassproxy: true,
+			  timeout:300
+			  )
+		}
+	}
+	
+	stage('upload'){
+		steps{
+		  rtupload(
+			  serverId: "Artifactory",
+			  spec: '''{
+			  "files":[
+			  {
+			  "pattern": "*.war",
+			  "target": "libs-snapshot-local"
+			  }
+			        ]
+			      }'''
+			  )
+		}
+	}
+	stage('publish build info'){
+		steps{
+		   rtPublishBuildInfo(
+		      serverId: "Artifactory" 
+			   )
+		}
+	}
+}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 }
      
