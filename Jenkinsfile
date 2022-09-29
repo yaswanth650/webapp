@@ -39,7 +39,7 @@ stages{
 			  url: 'http://13.127.151.229:8081/artifactory/',
 			  username: 'admin',
 			  password: 'RAVURI6@',
-			  bypassproxy: 'true',
+			  bypassProxy: 'true',
 			  timeout:300
 			  )
 		}
