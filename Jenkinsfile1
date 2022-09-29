@@ -76,7 +76,7 @@ stages{
             
             echo ' Artifact uploading start-----'
             
-            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.232.129.225:8081/repository/maven-central-repository/', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
+            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS _CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.232.129.225:8081/repository/maven-central-repository/', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
 		
              echo 'Artifact uploaded'
         }
