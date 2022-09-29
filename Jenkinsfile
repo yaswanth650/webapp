@@ -34,9 +34,9 @@ stages{
 	
 	stage('server'){
 		steps{
-		  rtserver(
+		  rtServer(
 			  id: "Artifactory",
-			  url: 'http://13.233.237.249:8081/artifactory',
+			  url: 'http://13.127.151.229:8081/artifactory/',
 			  username: 'admin',
 			  password: 'RAVURI6@',
 			  bypassproxy: true,
@@ -47,7 +47,7 @@ stages{
 	
 	stage('upload'){
 		steps{
-		  rtupload(
+		  rtUpload(
 			  serverId: "Artifactory",
 			  spec: '''{
 			  "files":[
