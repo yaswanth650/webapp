@@ -76,7 +76,7 @@ stages{
             
             echo ' Artifact uploading start-----'
 	    
-	    nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.235.103.67:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
+	    nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.127.142.32:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
             
           echo 'Artifact uploaded'
         }
@@ -86,7 +86,7 @@ stages{
 		steps{
 		  rtServer(
 			  id: "Artifactory",
-			  url: 'http://3.110.187.123:8081/artifactory/',
+			  url: 'http://52.66.53.76:8081/artifactory/',
 			  username: 'admin',
 			  password: 'RAVURI6@',
 			  bypassProxy: 'true',
@@ -121,7 +121,7 @@ stages{
     stage ('Deploy-To-Tomcat') {
             steps {
                sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@3.111.157.71:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.127.220.219:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
               }      
            }
         }
@@ -129,7 +129,7 @@ stages{
     stage ('Port Scan') {
 		    steps {
 		       	sh 'rm nmap* || true'
-		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 3.111.157.71'
+		       	sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 13.127.220.219'
 			       sh 'cat nmap'
 		    }
 	        }
@@ -137,7 +137,7 @@ stages{
      stage ('DAST') {
        steps {
           sshagent(['zap']) {
-            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@43.205.214.125 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://3.111.157.71:8080/webapp/" || true'
+            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.232.237.79 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://13.127.220.219:8080/webapp/" || true'
         }
       }
     }
@@ -151,17 +151,24 @@ stages{
 	  stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
-			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 3.111.157.71 -p 8080 -output /report/nikto-output.xml'
+			sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 13.127.220.219 -p 8080 -output /report/nikto-output.xml'
 			sh 'cat nikto-output.xml'   
 		    }
 	    }
 	
 	stage ('SSL Checks') {
 		    steps {
-		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  3.111.157.71:8443 --json_out results.json || true'
+		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.127.220.219:8443 --json_out results.json || true'
 		    }
 	       }
+	       
+	 stage('Image Scan') {
+            steps {
+               sh 'trivy image sonarqube'
+	       sh 'trivy image nablac0d3/sslyze:5.0.0'
+            }
         }
+       }
   }
 	    
 
