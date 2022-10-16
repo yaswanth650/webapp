@@ -21,11 +21,16 @@ stages{
       }
    }
 	
-	stage ('fod static assessment'){
-		steps{
-			fodStaticAssessment applicationName: '', applicationType: '', assessmentType: '', attributes: '', auditPreference: '2', bsiToken: '', businessCriticality: '', entitlementId: '', entitlementPreference: '', frequencyId: '', inProgressBuildResultType: 'FailBuild', inProgressScanActionType: 'Queue', isMicroservice: false, languageLevel: '20', microserviceName: '', openSourceScan: 'false', overrideGlobalConfig: true, personalAccessToken: 'FOD', releaseId: '191513', releaseName: '', remediationScanPreferenceType: 'RemediationScanIfAvailable', scanCentral: 'Maven', scanCentralBuildCommand: '', scanCentralBuildFile: '', scanCentralBuildToolVersion: '', scanCentralIncludeTests: '', scanCentralRequirementFile: '', scanCentralSkipBuild: '', scanCentralVirtualEnv: '', sdlcStatus: '', srcLocation: '', technologyStack: '7', tenantId: 'cg_642503112_FMA_606025728', username: 'yaswanth61998@gmail.com'
-		}
-	}
+   stage('Artifact file upload to S3BUCKET'){
+        steps{
+            
+            echo ' Artifact uploading start-----'
+	    
+             s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 's3-artifacts6', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-artifacts6', userMetadata: []
+          
+            echo 'Artifact uploaded'
+        }
+    }
 }
 }
 	
