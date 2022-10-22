@@ -31,11 +31,23 @@ stages{
             echo 'Artifact uploaded'
         }
     }
-   stage('ANSIBLE deploy to tomcat'){
+   stage('ANSIBLE deploy to tomcat over SSH'){
         steps{
             sshPublisher(publishers: [sshPublisherDesc(configName: 'ANSIBLE', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'ansible-playbook /home/ansible/prod/playbook/playbook.yaml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//prod', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])        
 	}
      }
+
+    stage('JENKINS DEPLOY TO TOMCAT DOCKER CONTAINER OVER SSH'){
+        steps{
+            sshPublisher(publishers: [sshPublisherDesc(configName: 'Docker', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''docker stop valaxy_demo;
+            docker rm -f valaxy_demo;
+            docker image rm -f valaxy_demo;
+            cd /opt/docker;
+            docker build -t valaxy_demo .
+            docker run -d --name valaxy_demo -p 8090:8080 valaxy_demo
+            ''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//opt//docker', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+             }
+         }
    }
 }
 	
