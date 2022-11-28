@@ -46,9 +46,9 @@ stages{
             docker build -t valaxy_demo .
             docker run -d --name valaxy_demo -p 8090:8080 valaxy_demo
             ''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//opt//docker', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-             }
-         }
-   }
+	}
+    }
+}
 }
 	
 	
