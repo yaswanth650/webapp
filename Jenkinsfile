@@ -48,10 +48,15 @@ stages{
             ''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//opt//docker', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 	}
     }
-}
-}
 	
-	
+  stage('Anchore analyse') {  
+    steps {  
+     writeFile file: 'anchore_images', text: 'docker.io/gesellix/trufflehog'  
+     anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
+    }  
+   }
+}
+}	
 	
 	
 	
