@@ -11,7 +11,7 @@ pipeline{
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
             '''
-         }
+        }
      }
     
    stage ('Build') {
@@ -30,6 +30,7 @@ pipeline{
             echo 'Artifact uploaded'
           }
       }
+	  
    stage('ANSIBLE deploy to tomcat over SSH'){
         steps{
             sshPublisher(publishers: [sshPublisherDesc(configName: 'ANSIBLE', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'ansible-playbook /home/ansible/prod/playbook/playbook.yaml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//prod', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])        
@@ -104,9 +105,15 @@ pipeline{
                   '''
                 }
            }
+	  
+	  stage('INSPEC'){
+            steps{
+                sh 'git clone https://github.com/dev-sec/cis-docker-benchmark.git||true'
+                sh 'inspec exe cis-docker-benchmark --chef-license=accept-silent ||true'
+            }
         }
-   }
-	
+    }
+}
 	
 	
 	
