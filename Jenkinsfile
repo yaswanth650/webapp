@@ -111,7 +111,13 @@ pipeline{
                 sh 'inspec exe cis-docker-benchmark --chef-license=accept-silent ||true'
             }
         }
-    }
+	  
+	stage('INSPEC CONTROLS'){
+            steps{
+                sh 'inspec exec /var/lib/jenkins/source/test.rb||true'
+                }
+            }
+  }
 }
 	
 	
