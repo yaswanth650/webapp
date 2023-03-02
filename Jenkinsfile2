@@ -14,11 +14,13 @@ stages{
             '''
       }
     }
-    
-   stage ('Build') {
+    stage ('SAST') {
       steps {
-      sh 'mvn clean package'
+        withSonarQubeEnv('sonarqube') {
+          sh 'mvn sonar:sonar'
+          sh 'cat target/sonar/report-task.txt'
+        }
       }
-   }
+    }
    }
    }
