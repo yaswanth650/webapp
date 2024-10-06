@@ -31,17 +31,8 @@ pipeline {
         
       }
     }
-    
-    stage ('SAST') {
-      steps {
-        withSonarQubeEnv('sonarqube') {
-          sh 'mvn sonar:sonar'
-          sh 'cat target/sonar/report-task.txt'
-        }
-      }
-    }
 
-       stage('snyk') {
+  stage('snyk') {
       steps {
         echo 'Testing...'
         snykSecurity(
@@ -51,6 +42,17 @@ pipeline {
           )
        }
      }
+    
+   stage ('SAST') {
+      steps {
+        withSonarQubeEnv('sonarqube') {
+          sh 'mvn sonar:sonar'
+          sh 'cat target/sonar/report-task.txt'
+        }
+      }
+    }
+
+       
 
      stage ('Build') {
       steps {
@@ -72,7 +74,7 @@ pipeline {
   stage('Artifact file upload to Nexus'){
         steps{
              echo ' Artifact uploading start-----'
-             nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '3.111.23.115:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'webapp', version: '1.0-SNAPSHOT'
+             nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '43.205.195.156:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'webapp', version: '1.0-SNAPSHOT'
              echo 'Artifact uploaded'
         }
     }
@@ -81,7 +83,7 @@ pipeline {
 		steps{
 		  rtServer(
 			  id: "Artifactory",
-			  url:'http://43.205.216.160:8081/artifactory/',
+			  url:'http://3.111.246.134:8081/artifactory/',
 			  username: 'admin',
 			  password: 'password',
 			  bypassProxy: 'true',
@@ -116,7 +118,7 @@ pipeline {
     stage ('Deploy-To-Tomcat') {
             steps{
            sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@3.108.62.157:/prod/apache-tomcat-10.1.30/webapps/Webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@3.110.159.42:/prod/apache-tomcat-10.1.30/webapps/Webapp.war'
               }      
            }       
     }
@@ -125,7 +127,7 @@ pipeline {
     stage ('DAST') {
       steps {
         sshagent(['owasp-zap']) {
-         sh 'ssh -o  StrictHostKeyChecking=no ubuntu@15.207.71.159 "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://3.108.62.157:8080/Webapp/" || true'
+         sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.127.82.120 "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://3.110.159.42:8080/Webapp/" || true'
         }
       }
     }
