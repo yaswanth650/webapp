@@ -70,7 +70,7 @@ pipeline {
 		steps{
 		  rtServer(
 			  id: "Artifactory",
-			  url: http://43.205.216.160:8081/artifactory/',
+			  url:'http://43.205.216.160:8081/artifactory/',
 			  username: 'admin',
 			  password: 'password',
 			  bypassProxy: 'true',
