@@ -40,8 +40,19 @@ pipeline {
         }
       }
     }
-    
-    stage ('Build') {
+
+       stage('snyk') {
+      steps {
+        echo 'Testing...'
+        snykSecurity(
+          snykInstallation: 'snyk',
+          snykTokenId: 'snyk-api',
+          failOnIssues:'false'
+          )
+       }
+     }
+
+     stage ('Build') {
       steps {
       sh 'mvn clean install'
        }
