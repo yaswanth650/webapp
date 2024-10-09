@@ -134,12 +134,6 @@ pipeline {
       }
     }
 
-   stage('Probely') {
-            steps {
-                probelyScan targetId: '3sC716o1SGnn', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
-            }
-         }
-
    stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
