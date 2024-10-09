@@ -134,6 +134,12 @@ pipeline {
       }
     }
 
+   stage('Probely') {
+            steps {
+                probelyScan targetId: '3sC716o1SGnn', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
+            }
+         }
+
    stage ('Nikto Scan') {
 		    steps {
 			sh 'rm nikto-output.xml || true'
@@ -147,5 +153,12 @@ pipeline {
 		        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.233.67.150:8443 --json_out results.json || true'
 		    }
 	       }
+
+       stage('Image Scan') {
+            steps {
+               sh 'trivy image gesellix/trufflehog'
+	       sh 'trivy image nablac0d3/sslyze:5.0.0'
+            }
+        }
    }  
 }
