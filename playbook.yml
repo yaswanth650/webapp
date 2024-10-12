@@ -1,0 +1,9 @@
+---
+hosts:web-servers
+become:true
+tasks:
+   name:copy war onto tomcat server
+   copy:
+    src:/opt/webapp/target/webapp.war
+    dest:/opt/webapp/target/webapp.war
+
