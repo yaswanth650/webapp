@@ -1,0 +1,184 @@
+pipeline{
+ agent any
+  tools{
+    maven 'Maven'
+  }
+stages{
+    stage('Initialize'){
+      steps{
+        sh '''
+
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+            '''
+      }
+    }
+
+     stage ('Check-Git-Secrets'){
+      steps{
+        sh 'rm trufflehog || true'
+        sh 'docker run gesellix/trufflehog --json https://github.com/yaswanth650/webapp.git > trufflehog'
+        sh 'cat trufflehog'
+      }
+    }
+
+     stage ('Source Composition Analysis') {
+       steps {
+         sh 'rm owasp* || true'
+         sh 'wget "https://raw.githubusercontent.com/yaswanth650/webapp/master/owasp-dependency-check.sh" '
+         sh 'chmod +x owasp-dependency-check.sh'
+         sh 'bash owasp-dependency-check.sh'
+         sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
+
+      }
+    }
+
+    stage('snyk') {
+      steps {
+        echo 'Testing...'
+        snykSecurity(
+          snykInstallation: 'snyk',
+          snykTokenId: 'snyk-api',
+          failOnIssues:'false'
+          )
+       }
+     }
+
+
+   stage ('SAST') {
+      steps {
+        withSonarQubeEnv('sonarqube') {
+          sh 'mvn sonar:sonar'
+          sh 'cat target/sonar/report-task.txt'
+        }
+      }
+    }
+
+    stage ('Build') {
+      steps {
+      sh 'mvn clean package'
+       }
+    }
+
+   stage('Artifact File exist'){
+        steps{
+
+            echo ' checking file in workspace'
+
+            fileExists '/var/lib/jenkins/workspace/webapp/target/WebApp.war'
+
+            echo 'file exist'
+        }
+    }
+
+   stage('Artifact file upload to Nexus'){
+        steps{
+
+            echo ' Artifact uploading start-----'
+
+            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.126.235.226:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
+
+          echo 'Artifact uploaded'
+        }
+    }
+
+    stage('server'){
+                steps{
+                  rtServer(
+                          id: "Artifactory",
+                          url: 'http://15.206.157.234:8081/artifactory/',
+                          username: 'admin',
+                          password: 'RAVURI6@',
+                          bypassProxy: 'true',
+                          timeout:300
+                          )
+                }
+        }
+
+        stage('upload'){
+                steps{
+                  rtUpload(
+                          serverId: "Artifactory",
+                          spec: '''{
+                          "files":[
+                          {
+                          "pattern": "*.war",
+                          "target": "libs-snapshot-local"
+                          }
+                                ]
+                              }'''
+                          )
+                }
+        }
+        stage('publish build info'){
+                steps{
+                   rtPublishBuildInfo(
+                      serverId: "Artifactory"
+                           )
+                }
+        }
+
+         stage('Artifact file upload to S3BUCKET'){
+        steps{
+
+            echo ' Artifact uploading start-----'
+
+             s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 's3-artifacts6', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-artifacts6', userMetadata: []
+
+            echo 'Artifact uploaded'
+        }
+    }
+
+    stage ('Deploy-To-Tomcat') {
+            steps {
+               sshagent(['tomcat']) {
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@65.1.65.218:/prod/apache-tomcat-9.0.65/webapps/webapp.war'
+              }
+           }
+        }
+
+    stage ('Port Scan') {
+                    steps {
+                        sh 'rm nmap* || true'
+                        sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 13.233.95.98'
+                               sh 'cat nmap'
+                    }
+                }
+
+     stage ('DAST') {
+       steps {
+          sshagent(['zap']) {
+            sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.233.212.86 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://65.1.65.218:8080/webapp/" || true'
+        }
+      }
+    }
+
+     stage('Probely') {
+            steps {
+                probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
+            }
+         }
+
+          stage ('Nikto Scan') {
+                    steps {
+                        sh 'rm nikto-output.xml || true'
+                        sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 65.1.65.218 -p 8080 -output /report/nikto-output.xml'
+                        sh 'cat nikto-output.xml'
+                    }
+            }
+
+        stage ('SSL Checks') {
+                    steps {
+                        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  65.1.65.218:8443 --json_out results.json || true'
+                    }
+               }
+
+         stage('Image Scan') {
+            steps {
+               sh 'trivy image sonarqube'
+               sh 'trivy image nablac0d3/sslyze:5.0.0'
+            }
+        }
+       }
+  }
+
