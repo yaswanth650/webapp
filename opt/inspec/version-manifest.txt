@@ -1,0 +1,26 @@
+inspec 3.9.3
+
+Component               Installed Version                          Version GUID                                                                                                                  Overridden From   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+bundler                 3.9.3                                      
+cacerts                 2019-01-23                                 sha256:c1fd9b235896b1094ee97bfb7e042f93530b5e300781f59b45edf84ee8c75000                                                       
+clean-static-libs       1.0.0                                      
+config_guess            master                                     git:84f04b02a7e2fc8eaa9d52deee5f6d57b06fe447                                                                                  
+gem-permissions         0.0.1                                      
+inspec                  v3.9.3                                     path:/home/jenkins/workspace/inspec-build/architecture/x86_64/platform/ubuntu-14.04/project/inspec/role/builder/omnibus/../   
+libffi                  3.2.1                                      md5:83b89587607e3eb65c70d361f13bab43                                                                                          
+libtool                 2.4                                        md5:b32b04148ecdd7344abc6fe8bd1bb021                                                                                          
+libyaml                 0.1.7                                      sha256:8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729                                                       
+makedepend              1.0.5                                      md5:efb2d7c7e22840947863efaedc175747                                                                                          
+openssl                 1.0.2r                                     sha256:ae51d08bba8a83958e894946f15303ff894d75c2b8bbd44a852b64e3fe11d0d6                                                       
+openssl-customization   3.9.3                                      
+pkg-config-lite         0.28-1                                     md5:61f05feb6bab0a6bbfab4b6e3b2f44b6                                                                                          
+preparation             1.0.0                                      
+ruby                    2.5.3                                      sha256:9828d03852c37c20fa333a0264f2490f07338576734d910ee3fd538c9520846c                                                       2.5.5             
+ruby-cleanup            3.9.3                                      
+rubygems                3.9.3                                      
+shebang-cleanup         0.0.2                                      
+unf_ext                 55d872fb15f3a26e4ee8f8dbe7ba859c80d40383   git:55d872fb15f3a26e4ee8f8dbe7ba859c80d40383                                                                                  
+util-macros             1.18.0                                     md5:fd0ba21b3179703c071bbb4c3e5fb0f4                                                                                          
+xproto                  7.0.25                                     md5:a47db46cb117805bd6947aa5928a7436                                                                                          
+zlib                    1.2.11                                     sha256:c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1                                                       

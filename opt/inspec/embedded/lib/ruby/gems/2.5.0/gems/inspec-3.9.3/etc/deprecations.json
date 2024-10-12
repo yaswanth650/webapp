@@ -1,0 +1,29 @@
+{
+  "file_version": "1.0.0",
+  "unknown_group_action": "ignore",
+  "groups": {
+    "attrs_value_replaces_default": {
+      "action": "ignore",
+      "prefix": "The 'default' option for attributes is being replaced by 'value' - please use it instead."
+    },
+    "cli_option_json_config": {
+      "action": "ignore",
+      "prefix": "The --json-config option is being replaced by the --config option.",
+      "comment": "See #3661"
+    },
+    "filesystem_property_size": {
+      "action": "ignore",
+      "comment": "See #3778"
+    },
+    "rename_attributes_to_inputs": {
+      "action": "ignore",
+      "prefix": "InSpec Attributes are being renamed to InSpec Inputs to avoid confusion with Chef Attributes.",
+      "comment": "See #3802"
+    },
+    "aws_resources_in_resource_pack": {
+      "comment": "See #3822",
+      "action": "ignore",
+      "prefix": "AWS resources shipped with core InSpec are being to moved to a resource pack for faster iteration. Please update your profiles to depend on git@github.com:inspec/inspec-aws.git ."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+prefix=/opt/inspec/embedded
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+enginesdir=${libdir}/engines
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: 1.0.2r
+Requires: 
+Libs: -L${libdir} -lcrypto
+Libs.private: -Wl,-rpath,/opt/inspec/embedded/lib -L/opt/inspec/embedded/lib -ldl
+Cflags: -I${includedir} 
