@@ -139,7 +139,7 @@ pipeline {
 
          stage('Image Scan') {
             steps {
-               sh 'trivy image sonarqube'
+               sh 'trivy image gesellix/trufflehog'
                sh 'trivy image nablac0d3/sslyze:5.0.0'
             }
         }
