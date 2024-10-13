@@ -45,22 +45,103 @@ pipeline {
       sh 'mvn clean package'
        }
     }
+
+   stage('Artifact File exist'){
+        steps{
+            echo ' checking file in workspace'
+            fileExists '/var/lib/jenkins/workspace/webapp/target/WebApp.war'
+            echo 'file exist'
+           }
+       }
+
+      stage('Artifact file upload to Nexus'){
+        steps{
+           echo ' Artifact uploading start-----'
+           nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: 'http://13.233.106.224:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'webapp', version: '1.0-SNAPSHOT'
+           echo 'Artifact uploaded'
+        }
+    }
+
+    stage('server'){
+                steps{
+                  rtServer(
+                          id: "Artifactory",
+                          url: 'http://13.126.97.241:8081/artifactory/',
+                          username: 'admin',
+                          password: 'password',
+                          bypassProxy: 'true',
+                          timeout:300
+                          )
+                }
+        }
+
+        stage('upload'){
+                steps{
+                  rtUpload(
+                          serverId: "Artifactory",
+                          spec: '''{
+                          "files":[
+                          {
+                          "pattern": "*.war",
+                          "target": "libs-snapshot-local"
+                          }
+                                ]
+                              }'''
+                          )
+                }
+        }
+        stage('publish build info'){
+                steps{
+                   rtPublishBuildInfo(
+                      serverId: "Artifactory"
+                           )
+                }
+        } 
     
     stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.126.249.50:/prod/apache-tomcat-10.1.30/webapps/webapp.war'
+                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@35.154.205.44:/prod/apache-tomcat-10.1.30/webapps/webapp.war'
               }      
            }       
     }
+
+   stage ('Port Scan') {
+                    steps {
+                        sh 'rm nmap* || true'
+                        sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 35.154.205.44'
+                               sh 'cat nmap'
+                    }
+                }
     
     
     stage ('DAST') {
       steps {
         sshagent(['owasp-zap']) {
-         sh 'ssh -o  StrictHostKeyChecking=no ubuntu@3.110.191.248 "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://13.126.249.50:8443/webapp/" || true'
+         sh 'ssh -o  StrictHostKeyChecking=no ubuntu@13.233.55.199 "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://35.154.205.44:8443/Webapp/" || true'
         }
       }
     }
+
+   stage ('Nikto Scan') {
+                    steps {
+                        sh 'rm nikto-output.xml || true'
+                        sh 'docker run --user $(id -u):$(id -g) --rm -v $(pwd):/report -i secfigo/nikto:latest -h 35.154.205.44 -p 8443 -output /report/nikto-output.xml'
+                        sh 'cat nikto-output.xml'
+                    }
+            }
+
+        stage ('SSL Checks') {
+                    steps {
+                        sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  35.154.205.44:8443 --json_out results.json || true'
+                    }
+               }
+
+         stage('Image Scan') {
+            steps {
+               sh 'trivy image sonarqube'
+               sh 'trivy image nablac0d3/sslyze:5.0.0'
+            }
+        }
     }
 }
