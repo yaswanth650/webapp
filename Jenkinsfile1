@@ -65,7 +65,7 @@ stages{
 
             echo ' checking file in workspace'
 
-            fileExists '/var/lib/jenkins/workspace/webapp/target/WebApp.war'
+            fileExists '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war'
 
             echo 'file exist'
         }
@@ -76,7 +76,7 @@ stages{
 
             echo ' Artifact uploading start-----'
 
-            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/webapp/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.126.235.226:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
+            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.126.235.226:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-central-repository', version: '1.0-SNAPSHOT'
 
           echo 'Artifact uploaded'
         }
