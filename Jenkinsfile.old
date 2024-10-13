@@ -77,7 +77,7 @@ pipeline {
                 steps{
                   rtServer(
                           id: "Artifactory",
-                          url: 'http://65.0.80.184/:8081/artifactory/',
+                          url: 'http://65.0.80.184:8081/artifactory/',
                           username: 'admin',
                           password: 'password',
                           bypassProxy: 'true',
