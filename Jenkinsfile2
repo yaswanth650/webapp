@@ -33,5 +33,11 @@ stage('Artifact file upload to S3BUCKET'){
             echo 'Artifact uploaded'
         }
     }
+
+stage('Probely') {
+            steps {
+                probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
+            }
+         }
    }
    }
