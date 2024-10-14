@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="probely-verification" content="28cc9c71-a9de-4ac7-8c3d-de369909854f" />
     <link rel="icon" href="../../favicon.ico">
 
     <title>Devsecops Course</title>
