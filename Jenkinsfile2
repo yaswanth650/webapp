@@ -22,5 +22,16 @@ stages{
         }
       }
     }
+
+stage('Artifact file upload to S3BUCKET'){
+        steps{
+
+            echo ' Artifact uploading start-----'
+
+             s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 's3-artifacts6', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-artifacts6', userMetadata: []
+
+            echo 'Artifact uploaded'
+        }
+    }
    }
    }
