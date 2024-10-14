@@ -108,7 +108,15 @@ pipeline {
                            )
                 }
         } 
-    
+
+   stage('Artifact file upload to S3BUCKET'){
+        steps{
+            echo ' Artifact uploading start-----'
+            s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'artifacts6', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'articats6', userMetadata: []
+            echo 'Artifact uploaded'
+        }
+    }
+   
     stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
