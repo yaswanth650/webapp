@@ -3,6 +3,9 @@ pipeline {
   tools {
     maven 'Maven'
   }
+ environment {
+         SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
+    }
   stages {
     stage ('Initialize') {
       steps {
@@ -48,6 +51,16 @@ pipeline {
           sh 'mvn sonar:sonar'
           sh 'cat target/sonar/report-task.txt'
         }
+      }
+    }
+
+ stage('Semgrep-Scan') {
+          steps {
+            sh '''docker pull semgrep/semgrep && \
+            docker run \
+            -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
+            -v "$(pwd):$(pwd)" --workdir $(pwd) \
+            semgrep/semgrep semgrep ci '''
       }
     }
     
