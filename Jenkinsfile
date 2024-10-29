@@ -12,26 +12,22 @@ pipeline{
             '''
         }
      }
-
-    stage('DOCKERIMAGE'){
+   stage('DOCKERIMAGE'){
             steps{
                 sh 'docker pull gesellix/trufflehog'
             }
         }
-
-        stage('GRYPE'){
+   stage('GRYPE'){
             steps{
                 sh 'grype gesellix/trufflehog'
             }
         }
-
-        stage('SYFT'){
+      stage('SYFT'){
             steps{
                 sh 'syft gesellix/trufflehog'
             }
         }
-
-         stage ('DOCKER-BENCH') {
+     stage ('DOCKER-BENCH') {
            steps {
                sh '''
                   docker run -i --net host --pid host --userns host --cap-add audit_control \
@@ -52,8 +48,7 @@ pipeline{
                sh 'git clone https://github.com/dev-sec/ssl-baseline.git||true'
             }
       }
-      
-     stage('INSPEC-EXEC'){
+      stage('INSPEC-EXEC'){
             steps{
                 sh 'inspec exe cis-docker-benchmark --chef-license-key  free-e028f41b-157d-4ad0-a672-860f457ba8ea-9290 ||true'
                 sh 'inspec exe ssh-baseline --chef-license-key  free-e028f41b-157d-4ad0-a672-860f457ba8ea-9290 ||true'
@@ -61,11 +56,10 @@ pipeline{
                 sh 'inspec exe ssl-baseline --chef-license-key  free-e028f41b-157d-4ad0-a672-860f457ba8ea-9290 ||true'
             }
         } 
-        
        stage('INSPEC CONTROLS'){
             steps{
                 sh 'inspec exec /var/lib/jenkins/workspace/DOCKER/test.rb --chef-license-key  free-e028f41b-157d-4ad0-a672-860f457ba8ea-9290 ||true'
                 }
-       }
+          }
    }
 }
