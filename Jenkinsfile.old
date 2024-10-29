@@ -12,22 +12,19 @@ pipeline {
             ''' 
       }
     }
-
-    stage ('Build') {
+   stage ('Build') {
       steps {
       sh 'mvn clean package'
        }
     }
-
-   stage('Artifact File exist'){
+    stage('Artifact File exist'){
         steps{
             echo ' checking file in workspace'
             fileExists '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war'
             echo 'file exist'
            }
        }
-
-    stage('ANSIBLE deploy to tomcat over SSH'){
+      stage('ANSIBLE deploy to tomcat over SSH'){
         steps{
             sshPublisher(publishers: [sshPublisherDesc(configName: 'ansible-server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''ansible-playbook /home/ansadmin/playbook/playbook.yml
             ''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//home//ansadmin//playbook', remoteDirectorySDF: false, removePrefix: '/target', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
