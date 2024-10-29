@@ -82,7 +82,7 @@
                 <execution>
                     <phase>test</phase>
                     <goals>
-                        <goal>test</goal>
+                        <goal>surefire-report:report</goal>
                       </goals> 
                 </execution>
             </executions>
