@@ -61,5 +61,28 @@ pipeline{
                 sh 'inspec exec /var/lib/jenkins/workspace/DOCKER/test.rb --chef-license-key  free-e028f41b-157d-4ad0-a672-860f457ba8ea-9290 ||true'
                 }
           }
+      stage('Anchore analyse') {
+           steps {
+               writeFile file: 'anchore_images', text: 'docker.io/gesellix/trufflehog'
+                anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images'
+              }
+         }
+     stage('dockerscan'){
+        steps{
+             sh '''
+                     docker stop db arminc/clair-db || true
+                     docker rm db arminc/clair-db || true
+                     docker run -d --name db arminc/clair-db
+                     sleep 15 # wait for db to come up
+                     docker stop clair arminc/clair-local-scan  || true
+                     docker rm clair arminc/clair-local-scan || true
+                     docker run -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan
+                     sleep 1
+                     DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
+                     wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
+                     ./clair-scanner --ip="$DOCKER_GATEWAY" anchore/anchore-engine:v1.0.0 || exit 0
+                 '''
+                 }
+            }
    }
 }
