@@ -3,10 +3,14 @@ pipeline{
   tools{
     maven 'Maven'
   }
-stage('Probely') {
-                 steps {
-                    probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
-               }
-           }
-   }
-   }
+  stages{
+    stage('Initialize'){
+      steps{
+        sh '''
+                echo "PATH = ${PATH}"
+                echo "M2_HOME = ${M2_HOME}"
+            '''
+        }
+     }
+}
+}
