@@ -15,7 +15,6 @@ pipeline {
             ''' 
       }
     }
-    
     stage ('Check-Git-Secrets') {
       steps {
         sh 'rm trufflehog || true'
@@ -23,7 +22,6 @@ pipeline {
         sh 'cat trufflehog'
       }
     }
-    
     stage ('Source Composition Analysis') {
       steps {
          sh 'rm owasp* || true'
@@ -33,8 +31,7 @@ pipeline {
          sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
          }
     }
-
-    stage('snyk') {
+  stage('snyk') {
       steps {
         echo 'Testing...'
         snykSecurity(
@@ -44,7 +41,6 @@ pipeline {
           )
        }
      }
-    
     stage ('SAST') {
       steps {
         withSonarQubeEnv('sonarqube') {
@@ -53,8 +49,7 @@ pipeline {
         }
       }
     }
-
- stage('Semgrep-Scan') {
+  stage('Semgrep-Scan') {
           steps {
             sh '''docker pull semgrep/semgrep && \
             docker run \
@@ -63,30 +58,26 @@ pipeline {
             semgrep/semgrep semgrep ci '''
       }
     }
-    
     stage ('Build') {
       steps {
       sh 'mvn clean package'
        }
     }
-
-   stage('Artifact File exist'){
+  stage('Artifact File exist'){
         steps{
             echo ' checking file in workspace'
             fileExists '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war'
             echo 'file exist'
            }
        }
-
-      stage('Artifact file upload to Nexus'){
+   stage('Artifact file upload to Nexus'){
         steps{
            echo ' Artifact uploading start-----'
            nexusArtifactUploader artifacts: [[artifactId: 'WebApp', classifier: '', file: '/var/lib/jenkins/workspace/WEBAPP/target/WebApp.war', type: 'war']], credentialsId: 'NEXUS_CRED', groupId: 'lu.amazon.aws.demo', nexusUrl: '13.201.84.116:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'webapp', version: '1.0-SNAPSHOT'
            echo 'Artifact uploaded'
         }
     }
-
-    stage('server'){
+   stage('server'){
                 steps{
                   rtServer(
                           id: "Artifactory",
@@ -98,8 +89,7 @@ pipeline {
                           )
                 }
         }
-
-        stage('upload'){
+     stage('upload'){
                 steps{
                   rtUpload(
                           serverId: "Artifactory",
@@ -121,32 +111,27 @@ pipeline {
                            )
                 }
         } 
-
-   stage('Artifact file upload to S3BUCKET'){
+    stage('Artifact file upload to S3BUCKET'){
         steps{
             echo ' Artifact uploading start-----'
             s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'artifacts6', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'articats6', userMetadata: []
             echo 'Artifact uploaded'
         }
     }
-   
-    stage ('Deploy-To-Tomcat') {
+   stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
                 sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@13.233.167.119:/prod/apache-tomcat-10.1.30/webapps/WebApp.war'
               }      
            }       
     }
-
-   stage ('Port Scan') {
+  stage ('Port Scan') {
                     steps {
                         sh 'rm nmap* || true'
                         sh 'docker run --rm -v "$(pwd)":/data uzyexe/nmap -sS -sV -oX nmap 13.233.167.119'
                                sh 'cat nmap'
                     }
                 }
-    
-    
     stage ('DAST') {
       steps {
         sshagent(['owasp-zap']) {
@@ -154,7 +139,6 @@ pipeline {
         }
       }
     }
-
    stage ('Nikto Scan') {
                     steps {
                         sh 'rm nikto-output.xml || true'
@@ -162,14 +146,12 @@ pipeline {
                         sh 'cat nikto-output.xml'
                     }
             }
-
-        stage ('SSL Checks') {
+    stage ('SSL Checks') {
                     steps {
                         sh 'docker run --rm -i nablac0d3/sslyze:5.0.0  13.233.167.119:8443 --json_out results.json || true'
                     }
                }
-
-         stage('Image Scan') {
+    stage('Image Scan') {
             steps {
                sh 'trivy image gesellix/trufflehog'
                sh 'trivy image nablac0d3/sslyze:5.0.0'
