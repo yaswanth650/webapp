@@ -157,6 +157,11 @@ pipeline {
                sh 'trivy image nablac0d3/sslyze:5.0.0'
             }
         }
+     stage('Probely') {
+                 steps {
+                    probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
+               }
+           }
     }
 }
    
