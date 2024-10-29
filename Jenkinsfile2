@@ -46,7 +46,6 @@ pipeline{
             steps {
                 recordIssues tools: [
                     checkStyle(pattern: '**/target/checkstyle-result.xml'),
-                    pmd(pattern: '**/target/pmd.xml'),
                     spotBugs(pattern: '**/target/spotbugsXml.xml')
                 ]
                 junit '**/target/surefire-reports/*.xml'
