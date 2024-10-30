@@ -29,7 +29,7 @@
             <configuration>
                 <encoding>UTF-8</encoding>
                  <failsOnError>false</failsOnError>
-              <outputFile>reports/checkstyle/checkstyle.xml</outputfile>
+              <outputFile>target/checkstyle.xml</outputfile>
               </configuration>
               <executions>
                 <execution>
@@ -50,8 +50,8 @@
             <minimumTokens>100</minimumTokens>
             <targetJdk>17</targetJdk>
              <format>xml</format>
-             <outputDirectory>reports/pmd/</outputDirectory>
-             <targetDirectory>reports/pmd/</targetDirectory>
+             <outputDirectory>target/</outputDirectory>
+             <targetDirectory>target/</targetDirectory>
             </configuration>
               <executions>
                 <execution>
@@ -71,7 +71,7 @@
              <effort>Max</effort>
              <threshold>Low</threshold>
              <!-- Optional directory to put findbugs xdoc xml report -->
-             <xmlOutputDirectory>reports/spotbugs</xmlOutputDirectory>
+             <xmlOutputDirectory>target/</xmlOutputDirectory>
            </configuration>
             <executions>
                 <execution>
@@ -91,7 +91,7 @@
              <effort>Max</effort>
              <threshold>Low</threshold>
              <!-- Optional directory to put findbugs xdoc xml report -->
-             <xmlOutputDirectory>reports/findbugs</xmlOutputDirectory>
+             <xmlOutputDirectory>target</xmlOutputDirectory>
            </configuration>
             <executions>
                 <execution>
