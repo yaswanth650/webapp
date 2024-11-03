@@ -49,7 +49,7 @@ pipeline {
            body: body,
            to: 'ravuriyaswanth6@gmail.com',
            from: 'jenkins@example.com',
-           replyTo: 'jenkins@example.com'
+           replyTo: 'jenkins@example.com',
            mimeType: 'text/html'
           )
       }
