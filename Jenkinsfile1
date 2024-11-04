@@ -5,6 +5,7 @@ pipeline {
   }
  environment {
          SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
+         CT_SERVER_URL = 'https://cloud.codethreat.com/'
     }
   stages {
     stage ('Initialize') {
@@ -58,6 +59,34 @@ pipeline {
             semgrep/semgrep semgrep ci '''
       }
     }
+    stage('Clone') {
+            steps {
+                git url: 'https://github.com/yaswanth650/webapp.git', branch: 'master'
+                sh 'zip -r webapp.zip .'
+            }
+        }
+   stage('CODETHREAT-Scan') {
+            steps {
+                 withCredentials([string(credentialsId: 'code-threat', variable: 'accessTokenSecret')]) {
+                    script {
+                        CodeThreatScan(
+                            ctServer: "${CT_SERVER_URL}",
+                            fileName: "webapp.zip",
+                            project_name: "webapp",
+                            credentialsId: "code-threat",
+                            organization_name: "yaswanth650@github",
+                            maxNumberOfHigh: 50,
+                            maxNumberOfCritical: 50,
+                            weaknessIs: ".*injection,buffer.over.read,mass.assignment", 
+                            condition: "OR",
+                            policyName: "Advanced Security",
+                            scaMaxNumberOfHigh: 25,
+                            scaMaxNumberOfCritical: 25
+                        )
+                    }
+                }
+            }
+        }
     stage ('Build') {
       steps {
       sh 'mvn clean package'
