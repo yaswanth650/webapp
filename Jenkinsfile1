@@ -191,7 +191,13 @@ pipeline {
                     probelyScan targetId: '2owcXbqFUMUh', credentialsId: 'probely', waitForScan: true, stopIfFailed: true, failThreshold: 'high'
                }
            }
-    }
+    stage ("Dastardly") {
+            steps {
+                cleanWs()
+                sh 'docker run --user $(id -u) -v ${WORKSPACE}:${WORKSPACE}:rw -e BURP_START_URL=https://65.0.3.174:8443/WebApp/ -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml public.ecr.aws/portswigger/dastardly:latest || true' 
+            }
+        }
+}
 post {
     always {
       script{
@@ -220,6 +226,13 @@ post {
            mimeType: 'text/html'
           )
       }
+   echo 'Slack Notifications'
+        slackSend (
+            channel: '#jenkins', 
+            color: COLOR_MAP[currentBuild.currentResult],
+            message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+        )
+    junit testResults: 'dastardly-report.xml', skipPublishingChecks: true
     }
   }
 }
