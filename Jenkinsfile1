@@ -232,12 +232,7 @@ post {
             color: COLOR_MAP[currentBuild.currentResult],
             message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
         )
-    script {
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-              junit 'target/surefire-reports/*.xml'
-               }
-          currentBuild.result = 'SUCCESS'
-        }
+        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
     }
   }
 }
