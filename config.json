@@ -1,0 +1,38 @@
+{
+    "projectOptions": {
+        "connections": {
+            "timeout": 60000,
+            "maxConnections": 10
+        },
+        "misc": {
+            "useHttps": true
+        }
+    },
+    "scanner": {
+        "activeScan": {
+            "enabled": true,
+            "scanSpeed": "fast"
+        },
+        "passiveScan": {
+            "enabled": true
+        }
+    },
+    "target": {
+        "scope": {
+            "include": [
+                {
+                    "url": "http://example.com"
+                }
+            ],
+            "exclude": [
+                {
+                    "url": "http://example.com/logout"
+                }
+            ]
+        }
+    },
+    "logging": {
+        "enabled": true,
+        "file": "/data/burp_scan_results.log"
+    }
+}
