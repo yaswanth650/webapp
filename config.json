@@ -21,12 +21,12 @@
         "scope": {
             "include": [
                 {
-                    "url": "https://43.205.116.138:8443/WebApp/"
+                    "url": "https://43.205.177.136:8443/WebApp/"
                 }
             ],
             "exclude": [
                 {
-                    "url": "https://43.205.116.138:8443/WebApp/logout"
+                    "url": "https://43.205.177.136:8443/WebApp/logout"
                 }
             ]
         }
