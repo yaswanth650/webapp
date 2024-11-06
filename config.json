@@ -21,12 +21,12 @@
         "scope": {
             "include": [
                 {
-                    "url": "http://example.com"
+                    "url": "tomcaturl"
                 }
             ],
             "exclude": [
                 {
-                    "url": "http://example.com/logout"
+                    "url": "tomcaturllogout"
                 }
             ]
         }
