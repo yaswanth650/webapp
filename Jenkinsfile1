@@ -200,8 +200,18 @@ options {
                 sh 'docker run --user $(id -u) -v ${WORKSPACE}:${WORKSPACE}:rw -e BURP_START_URL=https://65.0.3.174:8443/WebApp/ -e BURP_REPORT_FILE_PATH=${WORKSPACE}/dastardly-report.xml public.ecr.aws/portswigger/dastardly:latest || true' 
             }
         }
-}
-post {
+stage('WAPITI') {
+            steps {
+                sh 'wapiti -u https://13.233.29.72:8443/WebApp/ -f html -o .'
+            }
+        }
+      stage('WAPITI-SCAN') {
+            steps {
+                sh 'docker run --rm -v $(pwd):/root/.wapiti/generated_report jorgeandrada/wapiti  https://13.233.29.72:8443/WebApp/ -o .'
+            }
+        }   
+    }
+  post {
     always {
       script{
         def jobName = env.JOB_NAME
@@ -235,8 +245,16 @@ post {
             color: COLOR_MAP[currentBuild.currentResult],
             message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
         )
-        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
+        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: tru
+        publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: '/var/lib/jenkins/workspace/WAPITI',
+                    reportFiles: '*.html',
+                    reportName: 'WAPITI'
+                ])
+            }
     }
-  }
 }
    
