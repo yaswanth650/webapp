@@ -26,7 +26,7 @@ options {
         sh 'cat trufflehog'
       }
     }
-    stage ('Source Composition Analysis') {
+  stage ('Source Composition Analysis') {
       steps {
          sh 'rm owasp* || true'
          sh 'wget "https://raw.githubusercontent.com/cehkunal/webapp/master/owasp-dependency-check.sh" '
@@ -62,13 +62,13 @@ options {
             semgrep/semgrep semgrep ci '''
       }
     }
-    stage('Clone') {
+stage('Clone') {
             steps {
                 git url: 'https://github.com/yaswanth650/webapp.git', branch: 'master'
                 sh 'zip -r webapp.zip .'
             }
         }
-   stage('CODETHREAT-Scan') {
+    stage('CODETHREAT-Scan') {
             steps {
                  withCredentials([string(credentialsId: 'code-threat', variable: 'accessTokenSecret')]) {
                     script {
@@ -109,7 +109,7 @@ options {
            echo 'Artifact uploaded'
         }
     }
-   stage('server'){
+  stage('server'){
                 steps{
                   rtServer(
                           id: "Artifactory",
@@ -211,7 +211,7 @@ stage('WAPITI') {
             }
         }   
     }
-    post {
+post {
       always {
          script{
             def jobName = env.JOB_NAME
@@ -256,6 +256,7 @@ stage('WAPITI') {
                     ])
                }
          }
-      }
+}
+
 
    
