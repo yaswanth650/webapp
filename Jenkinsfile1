@@ -211,14 +211,14 @@ stage('WAPITI') {
             }
         }   
     }
-  post {
-    always {
-      script{
-        def jobName = env.JOB_NAME
-        def buildNumber = env.BUILD_NUMBER
-        def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
-        def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
-        def body = """<html>
+    post {
+      always {
+         script{
+            def jobName = env.JOB_NAME
+            def buildNumber = env.BUILD_NUMBER
+            def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
+            def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
+            def body = """<html>
                         <body>
                           <div style="border: 4px solid ${bannerColor}; padding: 10px;">
                              <h2>${jobName} - Build ${buildNumber}</h2>
@@ -230,32 +230,32 @@ stage('WAPITI') {
                          </div> 
                       </body>   
                    </html>"""
-        emailext (
-           subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
-           body: body,
-           to: 'ravuriyaswanth6@gmail.com',
-           from: 'jenkins@example.com',
-           replyTo: 'jenkins@example.com',
-           mimeType: 'text/html'
-          )
-      }
-   echo 'Slack Notifications'
-        slackSend (
-            channel: '#jenkins', 
-            color: COLOR_MAP[currentBuild.currentResult],
-            message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
-        )
-        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
-        publishHTML(target: [
+           emailext (
+               subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
+               body: body,
+               to: 'ravuriyaswanth6@gmail.com',
+              from: 'jenkins@example.com',
+              replyTo: 'jenkins@example.com',
+               mimeType: 'text/html'
+              )
+            }
+         echo 'Slack Notifications'
+            slackSend (
+                  channel: '#jenkins', 
+                  color: COLOR_MAP[currentBuild.currentResult],
+                  message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+            )
+            junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
+            publishHTML(target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: '/var/lib/jenkins/workspace/WAPITI',
                     reportFiles: '*.html',
                     reportName: 'WAPITI'
-                ])
-            }
-    }
-}
+                    ])
+               }
+         }
+      }
 
    
