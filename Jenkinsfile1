@@ -205,7 +205,7 @@ stage('WAPITI') {
                 sh 'wapiti -u https://13.233.29.72:8443/WebApp/ -f html -o .'
             }
         }
-      stage('WAPITI-SCAN') {
+  stage('WAPITI-SCAN') {
             steps {
                 sh 'docker run --rm -v $(pwd):/root/.wapiti/generated_report jorgeandrada/wapiti  https://13.233.29.72:8443/WebApp/ -o .'
             }
@@ -245,7 +245,7 @@ stage('WAPITI') {
             color: COLOR_MAP[currentBuild.currentResult],
             message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
         )
-        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: tru
+        junit testResults: 'dastardly-report.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
         publishHTML(target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
