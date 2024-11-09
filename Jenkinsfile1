@@ -90,6 +90,11 @@ stage('Clone') {
                 }
             }
         }
+    stage('HORUSEC') {
+            steps {
+              sh 'horusec start -p="./" -e="true" --disable-docker="true"  --information-severity="true" -i="./horusec-report.json" -o="json" -O="./horusec-report.json"'
+            }
+        }  
     stage ('Build') {
       steps {
       sh 'mvn clean package'
