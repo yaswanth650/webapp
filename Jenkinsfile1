@@ -94,8 +94,21 @@ stage('Clone') {
             steps {
               sh 'horusec start -p="./" -e="true" --disable-docker="true"  --config-file="./horusec-config.json" --information-severity="true" -i="./horusec-report.json" -o="json" -O="./horusec-report.json"'
             }
+        }
+       stage('BEARER') {
+            steps {
+             sh 'bearer scan . --exit-code 0'
+             sh 'bearer scan .  --exit-code 0 --report privacy '
+             sh 'bearer scan . --exit-code 0 --scanner=sast'
+             sh 'bearer scan .  --exit-code 0 --scanner=secrets'
+             sh 'bearer scan . --exit-code 0 --severity critical,high'
+             sh 'bearer scan . --exit-code 0 --format yaml --output report.yaml'
+             sh 'bearer scan . --exit-code 0 --report dataflow --output dataflow.json'
+             sh 'bearer scan . --exit-code 0 --format sarif --output sarif-report.sarif'
+             sh 'bearer scan . --exit-code 0 --format html --output security-scan.html'
+            }
         }  
-    stage ('Build') {
+  stage ('Build') {
       steps {
       sh 'mvn clean package'
        }
