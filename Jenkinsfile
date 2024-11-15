@@ -15,6 +15,7 @@ pipeline{
    stage('DOCKERIMAGE'){
             steps{
                 sh 'docker pull gesellix/trufflehog'
+                sh 'docker pull sasanlabs/owasp-vulnerableapp:unreleased'
             }
         }
    stage('GRYPE'){
@@ -80,9 +81,14 @@ pipeline{
                      sleep 1
                      DOCKER_GATEWAY=$(docker network inspect bridge --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}")
                      wget -qO clair-scanner https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64 && chmod +x clair-scanner
-                     ./clair-scanner --ip="$DOCKER_GATEWAY" -r report.json anchore/anchore-engine:v1.0.0 || exit 0
+                     ./clair-scanner --ip="$DOCKER_GATEWAY" -r report.json sasanlabs/owasp-vulnerableapp:unreleased || exit 0
                  '''
                  }
+            post {
+                 always {
+                        recordIssues tools: [clair(pattern: 'report.json')]
+                }
+            }
             }
    }
 }
