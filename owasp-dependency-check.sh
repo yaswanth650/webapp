@@ -10,9 +10,7 @@ if [ ! -d "$DATA_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $DATA_DIRECTORY"
     mkdir -p "$DATA_DIRECTORY"
     chmod -R 777 "$DATA_DIRECTORY"
-
-    mkdir -p "$REPORT_DIRECTORY"
-    chmod -R 777 "$REPORT_DIRECTORY"
+    chmod -R 777 "$(pwd)/odc-reports"
 fi
 if [ ! -d "$CACHE_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $CACHE_DIRECTORY"
@@ -31,7 +29,7 @@ docker run --rm \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     --volume $(pwd):/src:z \
     --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-    --volume $REPORT_DIRECTORY:/report \
+     --volume $(pwd)/odc-reports:/report:z \
     owasp/dependency-check:$DC_VERSION \
     --scan /src \
     --format "ALL" \
