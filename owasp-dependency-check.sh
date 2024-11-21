@@ -31,7 +31,7 @@ docker run --rm \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     --volume $(pwd):/src:z \
     --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-    --volume $REPORT_DIRECTORY:/report:z \
+    --volume $REPORT_DIRECTORY:/report: \
     owasp/dependency-check:$DC_VERSION \
     --scan /src \
     --format "ALL" \
