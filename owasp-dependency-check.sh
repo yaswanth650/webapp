@@ -17,13 +17,8 @@ fi
 docker pull owasp/dependency-check
 
 docker run --rm \
-    --volume $(pwd):/src \
-    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data \
-    --volume "$REPORT_DIRECTORY":/report \
-    owasp/dependency-check \
-    --purge
-
-docker run --rm \
+    -e user=$USER \
+    -u $(id -u ${USER}):$(id -g ${USER}) \
     --volume $(pwd):/src \
     --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data \
     --volume "$REPORT_DIRECTORY":/report \
