@@ -14,7 +14,7 @@ fi
 if [ ! -d "$CACHE_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $CACHE_DIRECTORY"
     mkdir -p "$CACHE_DIRECTORY"
-    
+     chmod -R 777 "$CACHE_DIRECTORY"
 fi
 # Make sure we are using the latest version
 docker pull owasp/dependency-check:$DC_VERSION
