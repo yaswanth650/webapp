@@ -13,9 +13,9 @@ fi
 if [ ! -d "$CACHE_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $CACHE_DIRECTORY"
     mkdir -p "$CACHE_DIRECTORY"
-    sudo chmod 644 /usr/share/dependency-check/data/jsrepository.json.properties
+    
 fi
-
+sudo chmod 644 /usr/share/dependency-check/data/jsrepository.json.properties
 # Make sure we are using the latest version
 docker pull owasp/dependency-check:$DC_VERSION
     
