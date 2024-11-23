@@ -13,18 +13,11 @@ fi
 if [ ! -d "$CACHE_DIRECTORY" ]; then
     echo "Initially creating persistent directory: $CACHE_DIRECTORY"
     mkdir -p "$CACHE_DIRECTORY"
+    sudo chmod 644 /usr/share/dependency-check/data/jsrepository.json.properties
 fi
 
 # Make sure we are using the latest version
 docker pull owasp/dependency-check:$DC_VERSION
-docker run --rm \
-    -e user=$USER \
-    -u $(id -u ${USER}):$(id -g ${USER}) \
-    --volume $(pwd):/src:z \
-    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data:z \
-    --volume $(pwd)/odc-reports:/report:z \
-    owasp/dependency-check:$DC_VERSION \
-    --purge
     
 docker run --rm \
     -e user=$USER \
