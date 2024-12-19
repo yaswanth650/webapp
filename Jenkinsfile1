@@ -227,7 +227,12 @@ stage('WAPITI') {
             steps {
                 sh 'docker run --rm -v $(pwd):/root/.wapiti/generated_report jorgeandrada/wapiti  https://13.233.29.72:8443/WebApp/ -o .'
             }
-        }   
+        } 
+   stage('SKIPFISH') {
+            steps {
+                sh 'skipfish -o skipfish  -W /usr/share/skipfish/dictionaries/wordlist.wl -S /usr/share/skipfish/dictionaries/complete.wl -d 10 -A test:test -H "User-Agent=CustomAgent" --auth-form=http://testphp.vulnweb.com/login.php --auth-user=test --auth-pass=test -k 0:10:00 http://testphp.vulnweb.com/'
+               }
+              }
     }
 post {
       always {
