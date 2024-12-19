@@ -230,7 +230,8 @@ stage('WAPITI') {
         } 
    stage('SKIPFISH') {
             steps {
-                sh 'skipfish -o skipfish  -W /usr/share/skipfish/dictionaries/wordlist.wl -S /usr/share/skipfish/dictionaries/complete.wl -d 10 -A test:test -H "User-Agent=CustomAgent" --auth-form=http://testphp.vulnweb.com/login.php --auth-user=test --auth-pass=test -k 0:10:00 http://testphp.vulnweb.com/'
+                sh 'rm -r skipfish || true'
+                sh 'skipfish --config /usr/share/skipfish/config/config.conf -o skipfish  -W /usr/share/skipfish/dictionaries/wordlist.wl -S /usr/share/skipfish/dictionaries/complete.wl -d 10 -A test:test -H "User-Agent=CustomAgent" --auth-form=http://testphp.vulnweb.com/login.php --auth-user=test --auth-pass=test -k 0:10:00 http://testphp.vulnweb.com/'
                }
               }
     }
