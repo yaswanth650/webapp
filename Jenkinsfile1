@@ -234,7 +234,20 @@ stage('WAPITI') {
                 sh 'skipfish --config /usr/share/skipfish/config/config.conf -o skipfish  -W /usr/share/skipfish/dictionaries/wordlist.wl -S /usr/share/skipfish/dictionaries/complete.wl -d 10 -A test:test -H "User-Agent=CustomAgent" --auth-form=http://testphp.vulnweb.com/login.php --auth-user=test --auth-pass=test -k 0:10:00 http://testphp.vulnweb.com/'
                }
               }
-    }
+    stage('SQLMAP') {
+            steps {
+                sh 'sqlmap -u http://testphp.vulnweb.com --forms --crawl=2 --batch  --current-user --current-db  --passwords --dbs -D acuart --tables -T  
+                    users --columns -C cart --dump --schema --random-agent --level=1 --risk=1 > output.txt'
+                  }
+             }
+   stage('WPSCAN') {
+            steps {
+                sh 'wpscan --url http://65.0.86.63:31337/ -e u --passwords /var/lib/jenkins/passwords.txt -e ap --plugins-detection aggressive -e t -e tt --wp-content-dir /wp-content --wp-plugins-dir /wp-content/plugins --max-threads 2 --api-token yCAplgzPw8oExc4kIYQhWCI1EVVzUB72b5ooHop5JP0  --stealthy  --random-user-agent -v --force --detection-mode mixed  --enumerate vp,vt -f json -o output.json'
+                sh 'wpscan --url http://65.0.86.63:31337/ -e u --passwords /var/lib/jenkins/passwords.txt -e ap --plugins-detection aggressive -e t -e tt --wp-content-dir /wp-content --wp-plugins-dir /wp-content/plugins --max-threads 2 --api-token yCAplgzPw8oExc4kIYQhWCI1EVVzUB72b5ooHop5JP0  --stealthy  --random-user-agent -v --force --detection-mode mixed  --enumerate vp,vt -o output.txt'
+                sh 'wpscan --url http://65.0.86.63:31337/ -e u --passwords /var/lib/jenkins/passwords.txt -e ap --plugins-detection aggressive -e t -e tt --wp-content-dir /wp-content --wp-plugins-dir /wp-content/plugins --max-threads 2 --api-token yCAplgzPw8oExc4kIYQhWCI1EVVzUB72b5ooHop5JP0  --stealthy  --random-user-agent -v --force --detection-mode mixed  --enumerate vp,vt -o output.xml'
+                 }
+            }
+     }
 post {
       always {
          script{
